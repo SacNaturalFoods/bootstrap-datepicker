@@ -45,6 +45,8 @@
 		this.isInput = this.element.is('input');
 		this.component = this.element.is('.date') ? this.element.find('.add-on, .btn') : false;
 		this.hasInput = this.component && this.element.find('input').length;
+        var altParent = this.element.offsetParent();
+        this.altParent = altParent.find('body').length ? false : altParent;
 		if(this.component && this.component.length === 0)
 			this.component = false;
 
@@ -305,7 +307,7 @@
 
 		show: function(e) {
 			if (!this.isInline)
-				this.picker.appendTo('body');
+				this.picker.appendTo(this.altParent ? this.altParent : 'body');
 			this.picker.show();
 			this.height = this.component ? this.component.outerHeight() : this.element.outerHeight();
 			this.place();
@@ -424,6 +426,11 @@
 							return $(this).css('z-index') != 'auto';
 						}).first().css('z-index'))+10;
 			var offset = this.component ? this.component.parent().offset() : this.element.offset();
+			if (this.altParent) {
+				var parent_offset = this.altParent.offset();
+				offset.top = offset.top - parent_offset.top;
+				offset.left = offset.left - parent_offset.left;
+			}
 			var height = this.component ? this.component.outerHeight(true) : this.element.outerHeight(false);
 			var width = this.component ? this.component.outerWidth(true) : this.element.outerWidth(false);
 			var left = offset.left,
